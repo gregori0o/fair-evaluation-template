@@ -18,9 +18,9 @@ def generate(dataset_name: DatasetName):
     np.random.seed(seed)
     folds = []
     for train, test in kfold.split(indexes):
-        folds.append(
-            {"train": np.random.shuffle(train), "test": np.random.shuffle(test)}
-        )
+        np.random.shuffle(train)
+        np.random.shuffle(test)
+        folds.append({"train": train, "test": test})
     dumped = json.dumps(folds, cls=NpEncoder)
     with open(path, "w") as f:
         f.write(dumped)

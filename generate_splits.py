@@ -9,14 +9,18 @@ from utils import NpEncoder
 
 
 def generate(dataset_name: DatasetName):
+    seed = 12
     path = f"data/{DATA_SPLITS_DIR}/{dataset_name.value}.json"
     size = GraphsDataset(dataset_name).size
-    kfold = KFold(n_splits=K_FOLD, shuffle=True, random_state=12)
+    kfold = KFold(n_splits=K_FOLD, shuffle=True, random_state=seed)
     indexes = np.arange(size)
 
+    np.random.seed(seed)
     folds = []
     for train, test in kfold.split(indexes):
-        folds.append({"train": train, "test": test})
+        folds.append(
+            {"train": np.random.shuffle(train), "test": np.random.shuffle(test)}
+        )
     dumped = json.dumps(folds, cls=NpEncoder)
     with open(path, "w") as f:
         f.write(dumped)
